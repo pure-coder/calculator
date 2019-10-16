@@ -1,0 +1,110 @@
+#container {
+    border-radius: 5px;
+    height: 300px;
+    width: 220px;
+    background-color: #000000;
+    padding: 2px 1px 1px 1px;
+    box-shadow: -3px 12px 8px 8px #aaaaaa;
+    margin: auto;
+ }
+
+.header {
+    position: relative;
+    border-radius: 5px 5px 5px 5px;
+    height: 100%;
+    width: 100%;
+    background-color: #303334;
+    box-shadow: 0 -1px #575859;
+}
+
+.result {
+    position: relative;
+    height: 19%;
+    color: #ffffff;
+    padding: 8px 10px;
+}
+
+.result p {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    margin: 0;
+    font-size: 60px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.calc-btns {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 1px;
+    border-radius: 0 0 5px 5px;
+    height: 69%;
+    width: 100%;
+    background-color: #303334;
+}
+
+/* buttons */
+
+.calc-btns button:nth-child(17) {
+    grid-column: 1 / 3;
+    grid-row: 5 / 5;
+}
+
+#top-btns {
+    margin-left: 5px;
+}
+
+.top-btn {
+    border-radius: 50%;
+    height: .8em;
+    border: none;
+    margin-left: 3px;
+}
+
+#top-red {
+    background-color: red;
+}
+
+#top-yellow {
+    background-color: yellow;
+}
+
+#top-green {
+    background-color: green;
+}
+
+#bottom-right-btn {
+    border-radius: 0 0 5px 0;
+}
+
+#bottom-left-btn {
+    border-radius: 0 0 0 5px;
+    text-align: left;
+    padding-left: 23px;
+}
+
+.btn {
+    height: 40px;
+    width: 100%;
+    border: 1px grey;
+    background-color: #636565;
+    color: #ffffff;
+    font-size: 1.2em;
+}
+
+.orange-btn {
+    background-color: #fd9f2b;
+    font-size: 1.6em;
+}
+
+.dark-grey-btn {
+    background-color: #444647;
+    font-size: 1.3em;
+}
+
+button {
+    outline: none;
+    border: 0;
+}
+
