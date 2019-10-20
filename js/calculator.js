@@ -13,15 +13,7 @@ $(document).ready(function(){
 
     // Equals button press
     $('.equals').on('click', function(){
-        if(totalNum !== '' && firstNum !== ''){
-            handleOperator('=');
-        }
-        else if(operator !== ''){
-            updateDisplay(firstNum);
-        }
-        else {
-            updateDisplay(totalNum);
-        }
+        equals();
     });
 
     // Handle key presses
@@ -33,23 +25,19 @@ $(document).ready(function(){
         let keypress = String.fromCharCode(e.which);
 
         if(keypress === '='){
-            console.log("= pressed")
-            if(totalNum !== '' && firstNum !== ''){
-                handleOperator('=');
-            }
-            else if(operator !== ''){
-                updateDisplay(firstNum);
-            }
-            else {
-                updateDisplay(totalNum);
-            }
+            equals();
         }
         else if(keypress >= 0 || keypress <= 9){
             let aNumber = parseFloat(keypress);
             handleNumber(aNumber);
         }
+        else if(keypress === '%'){
+            doPercentage();
+        }
+        else if(keypress === '+/-'){
+            doPlusMinus();
+        }
         else{
-            console.log(keypress)
             handleOperator(keypress);
         }
 
@@ -95,27 +83,75 @@ $(document).ready(function(){
         operator = anOperator;
     }
 
-    function handleOperator(anOperator){
-        if(firstNum === ''){
-            firstNum = totalNum;
-            totalNum = '';
+    function equals(){
+        if(totalNum !== '' && firstNum !== ''){
+            handleOperator('=');
         }
-        else if(operator === ''){
-            if(totalNum !== '' && firstNum !== ''){
-                handleArithmetic(anOperator, firstNum, totalNum);
-            }
-        }
-        else if(anOperator === '='){
-            if(totalNum !== '' && firstNum !== ''){
-                handleArithmetic(operator, firstNum, totalNum);
-            }
+        else if(operator !== ''){
+            updateDisplay(firstNum);
         }
         else {
-            if(totalNum !== '' && firstNum !== ''){
-                handleArithmetic(operator, firstNum, totalNum);
+            updateDisplay(totalNum);
+        }
+    }
+
+    function doPercentage(){
+        if(firstNum === ''){
+            totalNum = percentage(totalNum);
+            updateDisplay(totalNum);
+        }
+        else {
+            equals();
+            firstNum = percentage(firstNum);
+            updateDisplay(firstNum);
+        }
+    }
+
+    function doPlusMinus(){
+        if(firstNum !== '' || totalNum !== ''){
+            if(firstNum === ''){
+                totalNum = plusMinus(totalNum);
+                updateDisplay(totalNum);
+            }
+            else {
+                equals();
+                firstNum = plusMinus(firstNum);
+                updateDisplay(firstNum);
             }
         }
-        setOperator(anOperator);
+    }
+
+    function handleOperator(anOperator){
+
+        switch(anOperator){
+            case '%':
+                doPercentage();
+                break;
+            case '+/-':
+                doPlusMinus();
+                break;
+            default:
+                if(firstNum === ''){
+                    firstNum = totalNum;
+                    totalNum = '';
+                }
+                else if(operator === ''){
+                    if(totalNum !== '' && firstNum !== ''){
+                        handleArithmetic(anOperator, firstNum, totalNum);
+                    }
+                }
+                else if(anOperator === '='){
+                    if(totalNum !== '' && firstNum !== ''){
+                        handleArithmetic(operator, firstNum, totalNum);
+                    }
+                }
+                else {
+                    if(totalNum !== '' && firstNum !== ''){
+                        handleArithmetic(operator, firstNum, totalNum);
+                    }
+                }
+                setOperator(anOperator);
+        }
     }
 
     function allClear(){
@@ -213,6 +249,10 @@ $(document).ready(function(){
 
     function percentage(value1){
         return (parseFloat(value1) / 100);
+    }
+
+    function plusMinus(value1){
+        return (parseFloat(value1) * -1);
     }
 
 });
