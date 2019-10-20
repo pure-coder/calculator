@@ -11,6 +11,7 @@ $(document).ready(function(){
         allClear();
     });
 
+    // Equals button press
     $('.equals').on('click', function(){
         if(totalNum !== '' && firstNum !== ''){
             handleOperator('=');
@@ -23,6 +24,38 @@ $(document).ready(function(){
         }
     });
 
+    // Handle key presses
+    $(document).on('keypress', (function(e){
+        if(e.which === 13){
+            e.which = 61;
+            e.preventDefault();
+        }
+        let keypress = String.fromCharCode(e.which);
+
+        if(keypress === '='){
+            console.log("= pressed")
+            if(totalNum !== '' && firstNum !== ''){
+                handleOperator('=');
+            }
+            else if(operator !== ''){
+                updateDisplay(firstNum);
+            }
+            else {
+                updateDisplay(totalNum);
+            }
+        }
+        else if(keypress >= 0 || keypress <= 9){
+            let aNumber = parseFloat(keypress);
+            handleNumber(aNumber);
+        }
+        else{
+            console.log(keypress)
+            handleOperator(keypress);
+        }
+
+    }));
+
+    // Handle number button presses
     $('.number').on('click', function(e){
         let btn = e.target.innerHTML;
         let aNumber = parseFloat(btn);
@@ -52,6 +85,7 @@ $(document).ready(function(){
         }
     }
 
+    // Handle operator button presses
     $('.operator').on('click', function(e){
         let anOperator = e.target.innerHTML;
         handleOperator(anOperator);
