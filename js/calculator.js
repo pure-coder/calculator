@@ -5,7 +5,6 @@ $(document).ready(function(){
     var firstNum = '';
     var operator = '';
     var totalNum = '';
-    var decimalUsed = false;
 
     $('.clear').on('click', function(){
         allClear();
@@ -36,6 +35,9 @@ $(document).ready(function(){
         }
         else if(keypress === '+/-'){
             doPlusMinus();
+        }
+        else if(keypress === '.'){
+            doDecimal();
         }
         else{
             handleOperator(keypress);
@@ -108,16 +110,23 @@ $(document).ready(function(){
     }
 
     function doPlusMinus(){
-        if(firstNum !== '' || totalNum !== ''){
-            if(firstNum === ''){
-                totalNum = plusMinus(totalNum);
-                updateDisplay(totalNum);
-            }
-            else {
-                equals();
-                firstNum = plusMinus(firstNum);
-                updateDisplay(firstNum);
-            }
+        if(totalNum !== ''){
+            totalNum = plusMinus(totalNum);
+            updateDisplay(totalNum);
+        }
+    }
+
+    function doDecimal(){
+        let currentInput = display.text();
+        if(operator === '' && currentInput.indexOf(".") === -1 && checkLength() <= 14){
+            display.append('.');
+        }
+        else if(operator !== '' && totalNum === ''){
+            totalNum = '0.'
+            updateDisplay(totalNum);
+        }
+        else if(currentInput.indexOf(".") === -1 && checkLength() <= 14){
+            display.append('.');
         }
     }
 
@@ -129,6 +138,9 @@ $(document).ready(function(){
                 break;
             case '+/-':
                 doPlusMinus();
+                break;
+            case '.':
+                doDecimal();
                 break;
             default:
                 if(firstNum === ''){
@@ -189,13 +201,6 @@ $(document).ready(function(){
         else {
             display.css('font-size', '16px');
             display.css('bottom', '10px');
-        }
-    }
-
-    function checkDecimal(decimal){
-        if(!decimalUsed && checkLength() <= 14){
-            display.append(decimal);
-            decimalUsed = true;
         }
     }
 
