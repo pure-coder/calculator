@@ -1,129 +1,105 @@
 $(document).ready(function(){
 
-    const display = $(".result p");
+    const display = $('.result p');
     const fontSize = display.css('font-size');
     var firstNum = '';
-    var secondNum = '';
     var operator = '';
     var totalNum = '';
-    var currentInput;
     var decimalUsed = false;
 
-    $("button").on("click", function(e){
-        var btn = e.target.innerHTML;
-        // Stops fake red, yellow, green button from interfering with calculator
-        if(btn !== ''){
-            handleInput(btn);
-        }
-
+    $('.clear').on('click', function(){
+        allClear();
     });
 
-    $(document).on('keypress',(function(e){
-        // This prevents the last number entered from being constantly re-entered when enter key is pressed.
-        if(e.which === 13){
-            e.which = 61;
-            e.preventDefault();
+    $('.equals').on('click', function(){
+        if(totalNum !== '' && firstNum !== ''){
+            handleOperator('=');
         }
-        handleInput(String.fromCharCode(e.which));
-    }));
+        else if(operator !== ''){
+            updateDisplay(firstNum);
+        }
+        else {
+            updateDisplay(totalNum);
+        }
+    });
 
-    function handleInput(btn){
-        // Change font size if more than 5 numbers
-        updateFontSize();
+    $('.number').on('click', function(e){
+        let btn = e.target.innerHTML;
+        let aNumber = parseFloat(btn);
+        handleNumber(aNumber);
+    });
 
-        // Check if button pressed is a number
-        if(btn >= 0 || btn <= 9){
-            // Reset after calculation has been made (only if user doesn't click on another operator to continue current calculation)
-            if(totalNum !== ''){
-                allClear();
-            }
-            if(checkLength() === 1 && parseFloat(display.text()) === 0 ){
-                currentInput = btn;
+    function handleNumber(aNumber){
+        // Check to see if first number is empty if so add to first number.
+        if(firstNum === ''){
+            if(checkLength() === 1 && parseFloat(display.text()) === 0){
+                totalNum = aNumber;
             }
             else if(checkLength() < 16){
-                // Use concat here instead of append as call to updateDisplay would display [object object]
-                currentInput = display.text().concat(btn);
+                totalNum = display.text().concat(aNumber);
             }
-            // Update display with user input
-            updateDisplay(currentInput);
+            updateDisplay(totalNum);
         }
-        else if(btn === 'AC' || btn === '.' || btn === '+/-'){
-            switch(btn) {
-                case 'AC':
-                    allClear();
-                    break;
-                case '.':
-                    checkDecimal(btn);
-                    break;
-                case '+/-':
-                    // Toggle plus/minus
-                    // Make sure display is not empty
-                    if(display.text() !== ''){
-                        display.text(parseFloat(display.text())*-1);
-                    }
-                    break;
+        else {
+            if(totalNum === ''){
+                display.text('');
+                totalNum = aNumber;
             }
-        }
-        else if(totalNum !== '' && btn !== '='){
-            handleNumber(firstNum);
-            totalNum = '';
-            operator = btn;
-        }
-        // Check to see if first number, if so and = is pressed don't update screen, wait for an arithmetic operator to be pressed.
-        else if ((btn === '=' && firstNum === '') && currentInput !== ''){
-            updateDisplay(currentInput);
-        }
-        else if(currentInput !== ''){
-            currentInput = parseFloat(currentInput);
-            if($.isNumeric(currentInput)){
-                handleNumber(currentInput);
-                handleOperator(btn);
+            else if(checkLength() < 16){
+                totalNum = display.text().concat(aNumber);
             }
-            if(btn === '%' && currentInput <= 0){
-                totalNum = percentage(firstNum);
-                updateDisplay(totalNum);
-            }
+            updateDisplay(totalNum);
         }
     }
 
-    function handleNumber(number){
+    $('.operator').on('click', function(e){
+        let anOperator = e.target.innerHTML;
+        handleOperator(anOperator);
+    });
+
+    function setOperator(anOperator){
+        operator = anOperator;
+    }
+
+    function handleOperator(anOperator){
         if(firstNum === ''){
-            firstNum = number;
+            firstNum = totalNum;
+            totalNum = '';
         }
-        else{
-            secondNum = number;
-        }
-        currentInput = '';
-        updateDisplay(currentInput);
-    }
-
-    function handleOperator(theOperator) {
-        if (operator === '') {
-            operator = theOperator;
-        } else {
-            if(secondNum !== ''){
-                handleArithmetic(operator, firstNum, secondNum);
+        else if(operator === ''){
+            if(totalNum !== '' && firstNum !== ''){
+                handleArithmetic(anOperator, firstNum, totalNum);
             }
-            operator = theOperator;
         }
-
-        decimalUsed = false;
-
+        else if(anOperator === '='){
+            if(totalNum !== '' && firstNum !== ''){
+                handleArithmetic(operator, firstNum, totalNum);
+            }
+        }
+        else {
+            if(totalNum !== '' && firstNum !== ''){
+                handleArithmetic(operator, firstNum, totalNum);
+            }
+        }
+        setOperator(anOperator);
     }
 
     function allClear(){
         firstNum = '';
-        secondNum = '';
         operator = '';
         totalNum = '';
-        currentInput = 0;
         decimalUsed = false;
-        updateDisplay(currentInput);
+        updateDisplay('');
         updateFontSize();
     }
-
+    //
     function updateDisplay(input){
-        display.text(input);
+        if(input !== ''){
+            display.text(input);
+        }
+        else {
+            display.text(0);
+        }
         updateFontSize();
     }
 
@@ -153,40 +129,36 @@ $(document).ready(function(){
         }
     }
 
-    function handleArithmetic(operator){
+    function handleArithmetic(operator, theFirstNum, theSecondNum){
         // Check if it is an operator
         switch(operator) {
-            case '=':
-                updateDisplay(totalNum);
-                break;
             case '+':
-                totalNum = addition(firstNum, secondNum);
+                totalNum = addition(theFirstNum, theSecondNum);
                 updateDisplay(totalNum);
                 break;
             case '-':
-                totalNum = subtraction(firstNum, secondNum);
+                totalNum = subtraction(theFirstNum, theSecondNum);
                 updateDisplay(totalNum);
                 break;
             case '*':
-                totalNum = multiplication(firstNum, secondNum);
+                totalNum = multiplication(theFirstNum, theSecondNum);
                 updateDisplay(totalNum);
                 break;
             case '×':
-                totalNum = multiplication(firstNum, secondNum);
+                totalNum = multiplication(theFirstNum, theSecondNum);
                 updateDisplay(totalNum);
                 break;
             case '/':
-                totalNum = division(firstNum, secondNum);
+                totalNum = division(theFirstNum, theSecondNum);
                 updateDisplay(totalNum);
                 break;
             case '÷':
-                totalNum = division(firstNum, secondNum);
+                totalNum = division(theFirstNum, theSecondNum);
                 updateDisplay(totalNum);
                 break;
         }
         firstNum = totalNum;
-        secondNum = '';
-        updateDisplay(totalNum);
+        totalNum = '';
     }
 
     function addition(value1, value2){
